@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkedIn</title>
+  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen text-gray-800 antialiased">
+
+  <!-- ================= TOP NAVBAR ================= -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-xs h-[52px] flex items-center justify-center w-full">
+    <div class="flex items-center justify-between w-full max-w-[1128px] mx-auto h-full px-2">
+      
+      <!-- Left cluster: Logo + Search + Main Navs (Zero gap between search & Home) -->
+      <div class="flex items-center gap-4 h-full">
+        <!-- Logo + Search -->
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="#" onclick="switchTab('feed')" class="cursor-pointer flex items-center shrink-0" title="LinkUp Home">
+            <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#6366f1"/>
+                  <stop offset="100%" stop-color="#06b6d4"/>
+                </linearGradient>
+              </defs>
+              <!-- Rounded background tile -->
+              <rect width="38" height="38" rx="10" fill="url(#logoGrad)"/>
+              <!-- Abstract 4-pointed star / diamond mark -->
+              <path d="M19 6 L21.8 16.2 L32 19 L21.8 21.8 L19 32 L16.2 21.8 L6 19 L16.2 16.2 Z" fill="white" opacity="0.95"/>
+              <!-- Inner dot -->
+              <circle cx="19" cy="19" r="3" fill="url(#logoGrad)"/>
+            </svg>
+          </a>
+          <div class="flex items-center bg-[#edf3f8] rounded px-2.5 w-64 md:w-72 h-[34px] border border-transparent focus-within:border-black focus-within:bg-white transition-all">
+            <i class="fa-solid fa-magnifying-glass text-gray-500 text-xs mr-2"></i>
+            <input type="text" placeholder="Search jobs, skills, people..." class="bg-transparent border-0 outline-none text-xs text-gray-800 placeholder-gray-500 w-full h-full" />
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex items-center h-full">
+          <button id="nav-feed" onclick="switchTab('feed')" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[70px] px-2 relative text-gray-500 hover:text-black border-b-2 border-transparent transition-colors active-tab">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[11px] whitespace-nowrap mt-0.5">Home</span>
+          </button>
+          
+          <button id="nav-network" onclick="switchTab('network')" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[70px] px-2 relative text-gray-500 hover:text-black border-b-2 border-transparent transition-colors">
+            <i class="fa-solid fa-user-group text-lg"></i>
+            <span class="text-[11px] whitespace-nowrap mt-0.5">My Network</span>
+          </button>
+          
+          <button id="nav-jobs" onclick="switchTab('jobs')" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[70px] px-2 relative text-gray-500 hover:text-black border-b-2 border-transparent transition-colors">
+            <i class="fa-solid fa-briefcase text-lg"></i>
+            <span class="text-[11px] whitespace-nowrap mt-0.5">Jobs</span>
+          </button>
+          
+          <button id="nav-messaging" onclick="switchTab('messaging')" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[70px] px-2 relative text-gray-500 hover:text-black border-b-2 border-transparent transition-colors">
+            <i class="fa-solid fa-comment-dots text-lg"></i>
+            <span class="text-[11px] whitespace-nowrap mt-0.5">Messaging</span>
+            <span class="nav-badge">2</span>
+          </button>
+          
+          <button id="nav-notifications" onclick="switchTab('notifications')" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[70px] px-2 relative text-gray-500 hover:text-black border-b-2 border-transparent transition-colors">
+            <i class="fa-solid fa-bell text-lg"></i>
+            <span class="text-[11px] whitespace-nowrap mt-0.5">Notifications</span>
+            <span class="nav-badge">3</span>
+          </button>
+
+          <!-- Me Profile Container with Dropdown -->
+          <div id="nav-profile-container" class="relative h-full flex items-center">
+            <button id="nav-profile" onclick="toggleMeDropdown(event)" class="flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[65px] px-2 text-gray-500 hover:text-black border-b-2 border-transparent transition-colors">
+              <img id="nav-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-5 h-5 rounded-full object-cover border border-gray-300" />
+              <span class="text-[11px] whitespace-nowrap mt-0.5 flex items-center gap-0.5">Me <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+            </button>
+
+            <!-- LinkedIn Me Dropdown Menu -->
+            <div id="me-dropdown-menu" class="hidden absolute top-[52px] right-0 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden text-gray-800 text-xs py-2 select-none">
+              <!-- User Brief Card -->
+              <div class="px-4 py-3 border-b border-gray-100 flex items-start gap-3">
+                <img id="dropdown-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-11 h-11 rounded-full object-cover border border-gray-200 shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <h4 id="dropdown-name" class="font-bold text-sm text-gray-900 truncate">Alex Rivera</h4>
+                  <p id="dropdown-headline" class="text-[11px] text-gray-500 line-clamp-2 leading-tight">Senior Staff AI Engineer @ Anthropic</p>
+                </div>
+              </div>
+              
+              <div class="px-3 py-2 border-b border-gray-100">
+                <button onclick="switchTab('profile'); closeMeDropdown();" class="w-full text-center py-1 px-3 border border-[#0a66c2] text-[#0a66c2] hover:bg-blue-50 font-semibold rounded-full transition-colors">
+                  View Profile
+                </button>
+              </div>
+
+              <!-- Account Section -->
+              <div class="px-4 py-2 border-b border-gray-100 space-y-1.5">
+                <p class="font-bold text-xs text-gray-900">Account</p>
+                <a href="#" onclick="showToast('Free 30-Day LinkedIn Premium Trial Activated!'); closeMeDropdown();" class="block text-amber-700 font-semibold hover:underline text-[11px] flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 bg-amber-500 rounded-xs inline-block"></span> Try Premium for ₹0
+                </a>
+                <a href="#" onclick="closeMeDropdown(); showToast('Settings opened');" class="block text-gray-600 hover:text-black hover:underline text-[11px]">Settings & Privacy</a>
+                <a href="#" onclick="closeMeDropdown(); showToast('Help Center opened');" class="block text-gray-600 hover:text-black hover:underline text-[11px]">Help</a>
+              </div>
+
+              <!-- Switch Account / Demo Logins -->
+              <div class="px-4 py-2 border-b border-gray-100 space-y-1.5">
+                <p class="font-bold text-xs text-gray-900">Switch Account</p>
+                <div class="space-y-1">
+                  <button onclick="quickDemoLogin('alex@tech.io')" class="w-full text-left flex items-center gap-2 p-1 rounded hover:bg-gray-100 transition-colors">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-5 h-5 rounded-full object-cover" />
+                    <span class="truncate text-[11px] font-medium text-gray-700">Alex Rivera</span>
+                  </button>
+                  <button onclick="quickDemoLogin('priya@stripe.com')" class="w-full text-left flex items-center gap-2 p-1 rounded hover:bg-gray-100 transition-colors">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" class="w-5 h-5 rounded-full object-cover" />
+                    <span class="truncate text-[11px] font-medium text-gray-700">Priya Sharma</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sign In / Sign Up / Sign Out Links -->
+              <div class="px-2 pt-1 pb-0.5">
+                <a href="login.html" class="block w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-100 rounded text-[11px] font-medium flex items-center gap-2">
+                  <i class="fa-solid fa-arrow-right-to-bracket text-gray-500"></i>
+                  <span>Sign In as Another User</span>
+                </a>
+                <a href="signup.html" class="block w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-100 rounded text-[11px] font-medium flex items-center gap-2">
+                  <i class="fa-solid fa-user-plus text-gray-500"></i>
+                  <span>Join LinkedIn (Sign Up)</span>
+                </a>
+                <button onclick="authLogout()" class="w-full px-3 py-1.5 text-left text-red-600 hover:bg-red-50 rounded text-[11px] font-semibold flex items-center gap-2 transition-colors">
+                  <i class="fa-solid fa-right-from-bracket"></i>
+                  <span>Sign Out</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Right Side: Business & Premium + Auth Buttons -->
+      <div class="flex items-center h-full shrink-0 gap-2">
+        <div class="h-8 w-[1px] bg-gray-200 mx-1 hidden sm:block"></div>
+        
+        <!-- Auth Buttons (Visible when logged out or for quick access) -->
+        <div id="nav-auth-buttons" class="flex items-center gap-2">
+          <a href="signup.html" class="text-xs font-semibold text-gray-600 hover:text-black px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors">
+            Join now
+          </a>
+          <a href="login.html" class="text-xs font-semibold text-[#0a66c2] hover:bg-blue-50 border border-[#0a66c2] px-3.5 py-1.5 rounded-full transition-colors">
+            Sign in
+          </a>
+        </div>
+
+        <div class="hidden md:flex flex-col items-center justify-center cursor-pointer h-[52px] min-w-[75px] px-2 text-gray-500 hover:text-black">
+          <i class="fa-solid fa-table-cells text-lg"></i>
+          <span class="text-[11px] whitespace-nowrap mt-0.5">For Business ▾</span>
+        </div>
+        <div onclick="showToast('Free 30-Day LinkedIn Premium Trial Activated!')" class="hidden lg:flex flex-col items-center justify-center cursor-pointer h-[52px] px-2">
+          <span class="text-[11px] text-[#915907] hover:underline text-center leading-tight max-w-[85px] font-medium">Try Premium for ₹0</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl hidden z-50 flex items-center gap-2 transition-all">
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toast-msg">Action completed!</span>
+  </div>
+
+  <!-- ================= 1. HOME FEED VIEW ================= -->
+  <main id="view-feed" class="max-w-[1128px] mx-auto w-full px-4 py-5 flex gap-6 justify-center items-start">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-[225px] shrink-0 hidden md:flex flex-col gap-3">
+      <!-- Profile Card -->
+      <div class="sidebar-card w-full shadow-sm overflow-hidden">
+        <div class="h-16 w-full relative">
+          <img id="sidebar-banner" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" class="w-full h-full object-cover" />
+          <img id="sidebar-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-16 h-16 rounded-full border-2 border-white absolute -bottom-8 left-1/2 -translate-x-1/2 object-cover shadow-sm cursor-pointer" onclick="switchTab('profile')" />
+        </div>
+        <div class="pt-10 pb-3 px-4 text-center items-center w-full">
+          <h3 id="sidebar-name" onclick="switchTab('profile')" class="font-bold text-gray-900 text-sm hover:underline cursor-pointer">Alex Rivera</h3>
+          <p id="sidebar-headline" class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">Senior Staff AI Engineer @ Anthropic | Ex-Google Brain</p>
+        </div>
+        <hr class="border-gray-200" />
+        <div class="p-3 text-xs text-gray-500 space-y-1.5 w-full">
+          <div class="flex justify-between w-full">
+            <span>Profile viewers</span>
+            <span class="text-[#0a66c2] font-semibold">342</span>
+          </div>
+          <div class="flex justify-between w-full">
+            <span>Post impressions</span>
+            <span class="text-[#0a66c2] font-semibold">2,890</span>
+          </div>
+        </div>
+        <hr class="border-gray-200" />
+        <div onclick="showToast('Saved items opened')" class="p-3 flex items-center gap-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer w-full">
+          <i class="fa-solid fa-bookmark text-gray-500"></i>
+          <span>Saved items</span>
+        </div>
+      </div>
+
+      <!-- Recent Groups/Hashtags -->
+      <div class="sidebar-card w-full p-3 text-xs text-gray-600 space-y-2 shadow-sm">
+        <span class="font-semibold text-gray-800 text-[11px]">Recent</span>
+        <div class="space-y-1 text-gray-500">
+          <p class="hover:underline cursor-pointer hover:text-[#0a66c2]"># artificialintelligence</p>
+          <p class="hover:underline cursor-pointer hover:text-[#0a66c2]"># webdevelopment</p>
+          <p class="hover:underline cursor-pointer hover:text-[#0a66c2]"># python</p>
+          <p class="hover:underline cursor-pointer hover:text-[#0a66c2]"># engineering</p>
+          <p class="hover:underline cursor-pointer hover:text-[#0a66c2]"># startups</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER FEED COLUMN -->
+    <section class="w-full max-w-[540px] shrink-0 flex flex-col gap-3">
+      
+      <!-- "Start a post" Card -->
+      <div class="post-card p-4 w-full shadow-sm">
+        <div class="flex items-center gap-3 w-full">
+          <img id="postbox-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-12 h-12 rounded-full object-cover" />
+          <button onclick="openPostModal()" class="flex-1 text-left bg-[#f3f2ef] hover:bg-[#e8e7e3] text-gray-600 px-4 py-3 rounded-full text-sm font-medium border border-gray-300 transition-colors">
+            Start a post, try writing with AI...
+          </button>
+        </div>
+        
+        <!-- Post Action Triggers -->
+        <div class="flex justify-around items-center pt-3 mt-3 border-t text-sm font-medium text-gray-600">
+          <button onclick="openPostModal('image')" class="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+            <i class="fa-solid fa-image text-blue-500 text-lg"></i>
+            <span>Media</span>
+          </button>
+          <button onclick="openPostModal('video')" class="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+            <i class="fa-solid fa-video text-green-600 text-lg"></i>
+            <span>Video</span>
+          </button>
+          <button onclick="openPostModal()" class="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+            <i class="fa-solid fa-calendar-days text-amber-600 text-lg"></i>
+            <span>Event</span>
+          </button>
+          <button onclick="openPostModal()" class="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+            <i class="fa-solid fa-newspaper text-rose-500 text-lg"></i>
+            <span>Write article</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed Sort Separator -->
+      <div class="flex items-center justify-between text-xs text-gray-500 px-1">
+        <div class="flex items-center gap-2 w-full">
+          <hr class="flex-1 border-gray-300" />
+          <span>Sort by: <strong class="text-gray-800 cursor-pointer">Top ▾</strong></span>
+        </div>
+      </div>
+
+      <!-- Posts Stream Container -->
+      <div id="posts-feed" class="flex flex-col gap-3">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- RIGHT SIDEBAR (LINKEDIN NEWS) -->
+    <aside class="w-[300px] shrink-0 hidden lg:flex flex-col gap-3">
+      <div class="sidebar-card p-4 w-full shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-sm text-gray-900">LinkedIn News</h4>
+          <i class="fa-solid fa-circle-info text-gray-400 text-xs"></i>
+        </div>
+        <div class="space-y-2">
+          <div class="cursor-pointer hover:bg-gray-50 p-1 rounded">
+            <p class="text-xs font-semibold text-gray-800 hover:text-[#0a66c2]">• Autonomous AI agents surge in 2026</p>
+            <p class="text-[11px] text-gray-400 pl-2">Top news • 8,924 readers</p>
+          </div>
+          <div class="cursor-pointer hover:bg-gray-50 p-1 rounded">
+            <p class="text-xs font-semibold text-gray-800 hover:text-[#0a66c2]">• Tech hiring bounces back in Q1</p>
+            <p class="text-[11px] text-gray-400 pl-2">1d ago • 14,230 readers</p>
+          </div>
+          <div class="cursor-pointer hover:bg-gray-50 p-1 rounded">
+            <p class="text-xs font-semibold text-gray-800 hover:text-[#0a66c2]">• Open-source models match frontiers</p>
+            <p class="text-[11px] text-gray-400 pl-2">2d ago • 5,420 readers</p>
+          </div>
+          <div class="cursor-pointer hover:bg-gray-50 p-1 rounded">
+            <p class="text-xs font-semibold text-gray-800 hover:text-[#0a66c2]">• Remote & hybrid work policy trends</p>
+            <p class="text-[11px] text-gray-400 pl-2">3d ago • 9,102 readers</p>
+          </div>
+          <div class="cursor-pointer hover:bg-gray-50 p-1 rounded">
+            <p class="text-xs font-semibold text-gray-800 hover:text-[#0a66c2]">• Seed funding rebounds in Silicon Valley</p>
+            <p class="text-[11px] text-gray-400 pl-2">12h ago • 3,890 readers</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ad Widget -->
+      <div class="sidebar-card p-3 w-full shadow-sm text-xs text-gray-500 space-y-2">
+        <p class="text-[10px] uppercase font-semibold text-gray-400">Ad • Recommended for you</p>
+        <p class="font-semibold text-gray-800">Get 4x more visibility with LinkedIn Premium</p>
+        <button onclick="showToast('Free trial activated!')" class="border border-[#0a66c2] text-[#0a66c2] font-semibold rounded-full px-3 py-1 text-xs hover:bg-blue-50">
+          Try for Free
+        </button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ================= 2. JOBS VIEW ================= -->
+  <main id="view-jobs" class="max-w-[1128px] mx-auto w-full px-4 py-5 gap-6 justify-center items-start hidden">
+    <!-- Left Job Sidebar -->
+    <aside class="w-[240px] shrink-0 hidden md:flex flex-col gap-3">
+      <div class="sidebar-card p-4 w-full space-y-3 shadow-sm">
+        <h4 class="font-bold text-sm text-gray-900">Job Preferences</h4>
+        <div class="space-y-2 text-xs text-gray-700">
+          <div class="flex justify-between py-1 cursor-pointer hover:text-[#0a66c2]">
+            <span>My jobs</span><strong class="text-gray-500">3</strong>
+          </div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-[#0a66c2]">
+            <span>Job alerts</span><strong class="text-gray-500">5</strong>
+          </div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-[#0a66c2]">
+            <span>Demonstrate skills</span><strong class="text-gray-500">12</strong>
+          </div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-[#0a66c2]">
+            <span>Interview prep</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="showToast('Job posting portal coming soon!')" class="w-full border border-[#0a66c2] text-[#0a66c2] font-semibold rounded-full py-1.5 text-xs hover:bg-blue-50">
+        Post a free job
+      </button>
+    </aside>
+
+    <!-- Main Jobs Area -->
+    <section class="flex-1 max-w-[840px] flex flex-col gap-4">
+      <div class="post-card p-4 w-full shadow-sm">
+        <div class="flex gap-3 w-full items-center">
+          <input id="job-search-title" type="text" placeholder="Title, skill, or company" class="flex-1 border border-gray-300 rounded px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter') filterJobs()" />
+          <input id="job-search-location" type="text" placeholder="City, state, or remote" class="flex-1 border border-gray-300 rounded px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter') filterJobs()" />
+          <button onclick="filterJobs()" class="bg-[#0a66c2] text-white rounded-full px-6 py-2 text-xs font-semibold hover:bg-[#004182]">Search</button>
+        </div>
+      </div>
+
+      <div class="post-card p-4 w-full shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h3 class="font-bold text-base text-gray-900">Recommended for you</h3>
+            <p class="text-xs text-gray-500">Based on your profile and career history</p>
+          </div>
+          <span class="text-xs text-[#0a66c2] font-semibold">6 new opportunities</span>
+        </div>
+        
+        <div id="jobs-list" class="space-y-4">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= 3. MESSAGING VIEW ================= -->
+  <main id="view-messaging" class="max-w-[1128px] mx-auto w-full px-4 py-5 gap-6 justify-center items-start hidden">
+    <div class="post-card w-full flex flex-row overflow-hidden shadow-sm h-[650px]">
+      
+      <!-- Conversations List Pane -->
+      <div class="w-[320px] border-r h-full flex flex-col">
+        <div class="flex items-center justify-between p-3 border-b">
+          <h4 class="font-bold text-sm text-gray-900">Messaging</h4>
+          <i class="fa-solid fa-pen-to-square text-gray-500 cursor-pointer"></i>
+        </div>
+        <div class="p-2 border-b">
+          <input type="text" placeholder="Search messages..." class="w-full bg-gray-100 rounded-full px-3 py-1.5 text-xs outline-none" />
+        </div>
+        <div id="conversation-list" class="flex-1 overflow-y-auto">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Active Chat Thread Pane -->
+      <div class="flex-1 h-full flex flex-col justify-between">
+        <div class="flex items-center justify-between p-3 border-b bg-white">
+          <div class="flex items-center gap-3">
+            <img id="chat-active-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <h4 id="chat-active-name" class="font-bold text-sm text-gray-900">Priya Sharma</h4>
+              <p id="chat-active-headline" class="text-xs text-gray-500 line-clamp-1">VP of Product @ Stripe</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-gray-500">
+            <i class="fa-solid fa-video cursor-pointer hover:text-black"></i>
+            <i class="fa-regular fa-star cursor-pointer hover:text-black"></i>
+            <i class="fa-solid fa-ellipsis cursor-pointer hover:text-black"></i>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-[#f8f9fa] flex flex-col">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Message Input Bar -->
+        <div class="p-3 border-t bg-white flex items-center gap-2">
+          <input id="message-input" onkeydown="if(event.key==='Enter') sendMessage()" type="text" placeholder="Write a message..." class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-xs outline-none focus:border-[#0a66c2]" />
+          <button onclick="sendMessage()" class="bg-[#0a66c2] text-white rounded-full px-5 py-2 text-xs font-semibold hover:bg-[#004182]">
+            Send
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= 4. NOTIFICATIONS VIEW ================= -->
+  <main id="view-notifications" class="max-w-[1128px] mx-auto w-full px-4 py-5 gap-6 justify-center items-start hidden">
+    <aside class="w-[240px] shrink-0 hidden md:flex flex-col gap-3">
+      <div class="sidebar-card p-4 w-full space-y-2 shadow-sm">
+        <h4 class="font-bold text-sm text-gray-900">Manage Notifications</h4>
+        <span class="text-xs text-[#0a66c2] font-semibold hover:underline cursor-pointer">View settings</span>
+        <hr class="my-2 border-gray-200" />
+        <div class="space-y-2 text-xs text-gray-700">
+          <p class="cursor-pointer hover:text-[#0a66c2] font-semibold">All</p>
+          <p class="cursor-pointer hover:text-[#0a66c2]">My posts</p>
+          <p class="cursor-pointer hover:text-[#0a66c2]">Mentions</p>
+          <p class="cursor-pointer hover:text-[#0a66c2]">Jobs</p>
+          <p class="cursor-pointer hover:text-[#0a66c2]">Connections</p>
+        </div>
+      </div>
+    </aside>
+
+    <section class="flex-1 max-w-[840px] flex flex-col gap-3">
+      <div class="post-card w-full overflow-hidden shadow-sm" id="notifications-list">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= 5. MY NETWORK VIEW ================= -->
+  <main id="view-network" class="max-w-[1128px] mx-auto w-full px-4 py-5 gap-6 justify-center items-start hidden">
+    <aside class="w-[240px] shrink-0 hidden md:flex flex-col gap-3">
+      <div class="sidebar-card p-4 w-full space-y-3 shadow-sm">
+        <h4 class="font-bold text-sm text-gray-900">Manage my network</h4>
+        <div class="space-y-2 text-xs text-gray-600">
+          <div class="flex justify-between py-1 cursor-pointer hover:text-black"><span>Connections</span><strong id="network-conn-count">428</strong></div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-black"><span>Contacts</span><strong>1,200</strong></div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-black"><span>Following & Followers</span><strong>610</strong></div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-black"><span>Groups</span><strong>8</strong></div>
+          <div class="flex justify-between py-1 cursor-pointer hover:text-black"><span>Pages</span><strong>42</strong></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="flex-1 max-w-[840px] flex flex-col gap-4">
+      <!-- Invitations -->
+      <div class="post-card p-4 w-full shadow-sm">
+        <h4 class="font-bold text-sm text-gray-900 mb-3" id="inv-header-count">Invitations (2)</h4>
+        <div id="invitations-list" class="space-y-3">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- People You May Know -->
+      <div class="post-card p-4 w-full shadow-sm">
+        <h4 class="font-bold text-sm text-gray-900 mb-4">People you may know in your industry</h4>
+        <div id="recommendations-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= 6. PROFILE VIEW ================= -->
+  <main id="view-profile" class="max-w-[1128px] mx-auto w-full px-4 py-5 flex flex-col gap-4 hidden">
+    <!-- Header Banner & Avatar Card -->
+    <div class="post-card w-full overflow-hidden relative shadow-sm pb-5">
+      <!-- Banner with click-to-change overlay -->
+      <div class="h-48 w-full relative group">
+        <img id="profile-banner-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" class="w-full h-full object-cover" />
+        <!-- Banner upload overlay -->
+        <label for="banner-file-direct" class="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-all flex items-center justify-center cursor-pointer" title="Change banner photo">
+          <span class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1 text-white">
+            <i class="fa-solid fa-camera text-2xl drop-shadow"></i>
+            <span class="text-xs font-semibold drop-shadow">Change Banner</span>
+          </span>
+        </label>
+        <input type="file" id="banner-file-direct" accept="image/*" class="hidden" onchange="handleDirectBannerUpload(event)" />
+
+        <!-- Avatar with click-to-change overlay -->
+        <div class="absolute -bottom-16 left-8 group/avatar w-32 h-32">
+          <img id="profile-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-32 h-32 rounded-full border-4 border-white object-cover shadow-md" />
+          <label for="avatar-file-direct" class="absolute inset-0 rounded-full bg-black/0 group-hover/avatar:bg-black/40 transition-all flex items-center justify-center cursor-pointer" title="Change profile photo">
+            <span class="opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center gap-0.5 text-white">
+              <i class="fa-solid fa-camera text-xl drop-shadow"></i>
+              <span class="text-[10px] font-semibold drop-shadow">Edit</span>
+            </span>
+          </label>
+          <input type="file" id="avatar-file-direct" accept="image/*" class="hidden" onchange="handleDirectAvatarUpload(event)" />
+        </div>
+      </div>
+
+      <div class="flex justify-end p-4">
+        <button onclick="openEditProfileModal()" class="rounded-full border border-gray-400 text-gray-700 text-xs font-semibold px-4 py-1.5 hover:bg-gray-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-pen text-xs"></i> Edit Profile
+        </button>
+      </div>
+
+      <div class="px-8 pt-4">
+        <h2 id="profile-name-text" class="text-2xl font-bold text-gray-900">Alex Rivera</h2>
+        <p id="profile-headline-text" class="text-sm text-gray-700 mt-1 max-w-xl">Senior Staff AI Engineer @ Anthropic | Ex-Google Brain</p>
+        <div class="flex items-center gap-2 text-xs text-gray-500 mt-2">
+          <span id="profile-location-text">San Francisco, CA</span>
+          <span>•</span>
+          <span class="text-[#0a66c2] font-semibold hover:underline cursor-pointer">500+ connections</span>
+        </div>
+        
+        <div class="flex gap-2 mt-4">
+          <button onclick="showToast('Open to work frame enabled!')" class="bg-[#0a66c2] text-white rounded-full px-4 py-1.5 text-xs font-semibold hover:bg-[#004182]">Open to work</button>
+          <button class="border border-[#0a66c2] text-[#0a66c2] rounded-full px-4 py-1.5 text-xs font-semibold hover:bg-blue-50">Add profile section</button>
+          <button class="border border-gray-400 text-gray-600 rounded-full px-4 py-1.5 text-xs font-semibold hover:bg-gray-100">More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Card -->
+    <div class="post-card p-6 w-full space-y-2 shadow-sm">
+      <h3 class="font-bold text-lg text-gray-900">About</h3>
+      <p id="profile-about-text" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+        Passionate about foundation models, autonomous agents, and high-performance distributed systems. 10+ years engineering scalable cloud backends and mentoring the next generation of engineers.
+      </p>
+    </div>
+
+    <!-- Experience Card -->
+    <div class="post-card p-6 w-full space-y-4 shadow-sm">
+      <h3 class="font-bold text-lg text-gray-900">Experience</h3>
+      <div class="space-y-4">
+        <div class="flex items-start gap-3 border-b pb-4">
+          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80" class="w-12 h-12 rounded object-cover border" />
+          <div class="flex-1">
+            <h4 class="font-bold text-sm text-gray-900">Staff AI Engineer</h4>
+            <p class="text-xs text-gray-700">Anthropic • Full-time</p>
+            <p class="text-xs text-gray-400">2023 - Present • 2 yrs</p>
+            <p class="text-xs text-gray-600 mt-1">Leading agent reasoning and distributed systems infrastructure.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100&auto=format&fit=crop&q=80" class="w-12 h-12 rounded object-cover border" />
+          <div class="flex-1">
+            <h4 class="font-bold text-sm text-gray-900">Senior Software Engineer</h4>
+            <p class="text-xs text-gray-700">Google Brain • Full-time</p>
+            <p class="text-xs text-gray-400">2020 - 2023 • 3 yrs</p>
+            <p class="text-xs text-gray-600 mt-1">Architected large-scale distributed training pipelines for neural search.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= LICENSES & CERTIFICATIONS CARD ================= -->
+    <div class="post-card p-6 w-full shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <h3 class="font-bold text-lg text-gray-900">Licenses & certifications</h3>
+          <span id="certifications-count" class="text-xs font-semibold text-[#0a66c2] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">0</span>
+        </div>
+        <button onclick="openAddCertModal()" class="text-gray-600 hover:text-[#0a66c2] hover:bg-blue-50 p-2 rounded-full w-9 h-9 flex items-center justify-center transition-colors" title="Add license or certification">
+          <i class="fa-solid fa-plus text-base"></i>
+        </button>
+      </div>
+
+      <!-- Certifications List -->
+      <div id="profile-certifications-list" class="space-y-4">
+        <!-- Rendered via renderCertifications() -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="profile-certifications-empty" class="hidden text-center py-8 px-4 bg-gray-50/70 rounded-xl border border-dashed border-gray-200">
+        <div class="w-12 h-12 mx-auto bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-xl mb-2">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <h4 class="font-bold text-sm text-gray-800">No certifications yet</h4>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-3">Showcase your verified licenses and certificates to potential employers.</p>
+        <button onclick="openAddCertModal()" class="border border-[#0a66c2] text-[#0a66c2] hover:bg-blue-50 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors">
+          + Add certification
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= SKILLS CARD ================= -->
+    <div class="post-card p-6 w-full shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <h3 class="font-bold text-lg text-gray-900">Skills</h3>
+          <span id="skills-count" class="text-xs font-semibold text-[#0a66c2] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">0</span>
+        </div>
+        <button onclick="openAddSkillModal()" class="text-gray-600 hover:text-[#0a66c2] hover:bg-blue-50 p-2 rounded-full w-9 h-9 flex items-center justify-center transition-colors" title="Add skill">
+          <i class="fa-solid fa-plus text-base"></i>
+        </button>
+      </div>
+
+      <!-- Skills List -->
+      <div id="profile-skills-list" class="space-y-2.5">
+        <!-- Rendered via renderSkills() -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="profile-skills-empty" class="hidden text-center py-8 px-4 bg-gray-50/70 rounded-xl border border-dashed border-gray-200">
+        <div class="w-12 h-12 mx-auto bg-blue-50 text-[#0a66c2] rounded-full flex items-center justify-center text-xl mb-2">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h4 class="font-bold text-sm text-gray-800">No skills added yet</h4>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-3">Add skills to help connections and recruiters know your core strengths.</p>
+        <button onclick="openAddSkillModal()" class="border border-[#0a66c2] text-[#0a66c2] hover:bg-blue-50 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors">
+          + Add skill
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= ACTIVITY / POSTS CARD ================= -->
+    <div class="post-card p-6 w-full shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-lg text-gray-900">Activity</h3>
+            <span id="profile-posts-count" class="text-xs font-semibold text-[#0a66c2] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">0 posts</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-0.5">Posts, photos, videos, and updates you've shared with your network</p>
+        </div>
+        <button onclick="openPostModal()" class="border-2 border-[#0a66c2] text-[#0a66c2] hover:bg-blue-50 text-xs font-bold px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-plus text-xs"></i> Create a post
+        </button>
+      </div>
+
+      <!-- Feed of User's Posts -->
+      <div id="profile-posts-list" class="space-y-4">
+        <!-- Injected via renderProfilePosts() -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="profile-posts-empty" class="hidden text-center py-10 px-4 bg-gray-50/70 rounded-xl border border-dashed border-gray-200">
+        <div class="w-12 h-12 mx-auto bg-blue-100 text-[#0a66c2] rounded-full flex items-center justify-center text-xl mb-3">
+          <i class="fa-regular fa-newspaper"></i>
+        </div>
+        <h4 class="font-bold text-sm text-gray-800">You haven't posted yet</h4>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto mt-1 mb-4">Photos, videos, and articles you share with your connections will appear here.</p>
+        <button onclick="openPostModal()" class="bg-[#0a66c2] text-white hover:bg-blue-700 text-xs font-semibold px-4 py-2 rounded-full transition-all">
+          Create your first post
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= POST CREATION MODAL ================= -->
+  <div id="post-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[560px] rounded-xl p-5 shadow-2xl flex flex-col gap-3">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-3">
+          <img id="modal-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover" />
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Alex Rivera</h4>
+            <span class="text-xs text-gray-500 border border-gray-300 rounded-full px-2 py-0.5">Post to Anyone 🌐</span>
+          </div>
+        </div>
+        <button onclick="closePostModal()" class="text-gray-400 hover:text-black text-lg p-1">✕</button>
+      </div>
+
+      <!-- Textarea -->
+      <textarea id="modal-post-text" placeholder="What do you want to talk about?" class="w-full text-base outline-none resize-none min-h-[110px] placeholder-gray-400"></textarea>
+
+      <!-- Live Media Preview -->
+      <div id="modal-preview-container" class="relative rounded-lg overflow-hidden border hidden">
+        <!-- Rendered preview -->
+      </div>
+
+      <!-- Media Attach Bar -->
+      <div class="border rounded-lg p-3 bg-gray-50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-gray-700">Attach Media (Multiple Images Supported)</span>
+          <span id="attached-filename" class="text-xs text-[#0a66c2] font-medium truncate max-w-[200px]"></span>
+        </div>
+
+        <div class="flex gap-2">
+          <!-- File upload button from local gallery -->
+          <label class="flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-xs text-center cursor-pointer hover:bg-gray-100 flex items-center justify-center gap-1.5 font-medium transition-colors">
+            <i class="fa-solid fa-images text-blue-600"></i>
+            <span>Choose Photos / Video</span>
+            <input type="file" id="local-file-input" accept="image/*,video/*" multiple class="hidden" onchange="handleFileSelect(event)" />
+          </label>
+          <!-- Or URL Button -->
+          <button type="button" onclick="toggleUrlInput()" class="bg-white border border-gray-300 rounded px-3 py-2 text-xs hover:bg-gray-100 font-medium transition-colors">
+            🔗 Web URL
+          </button>
+        </div>
+
+        <!-- URL Input Dropdown -->
+        <div id="url-input-box" class="space-y-2 hidden pt-2">
+          <div class="flex gap-2">
+            <input type="text" id="media-url-val" placeholder="Paste image or mp4 URL..." class="flex-1 border rounded px-2.5 py-1.5 text-xs outline-none" onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlMedia();}" />
+            <button type="button" onclick="addUrlMedia()" class="bg-[#0a66c2] text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-[#004182]">Add</button>
+          </div>
+          <div class="flex gap-1 text-[11px] text-gray-500 items-center">
+            <span>Presets:</span>
+            <button type="button" onclick="applyPreset('image', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1000&auto=format&fit=crop&q=80')" class="underline hover:text-black">Tech Graphic</button>
+            <span>•</span>
+            <button type="button" onclick="applyPreset('video', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4')" class="underline hover:text-black">Demo Video</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Submit -->
+      <div class="flex justify-end border-t pt-3 mt-1">
+        <button onclick="submitNewPost()" class="bg-[#0a66c2] text-white px-5 py-2 rounded-full font-semibold text-xs hover:bg-[#004182]">
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EDIT POST MODAL ================= -->
+  <div id="edit-post-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[560px] rounded-xl p-5 shadow-2xl flex flex-col gap-3 max-h-[92vh] overflow-y-auto">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-3">
+          <img id="edit-post-modal-avatar" src="" class="w-10 h-10 rounded-full object-cover border" />
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Edit Post</h4>
+            <span id="edit-post-modal-author" class="text-xs text-gray-500"></span>
+          </div>
+        </div>
+        <button onclick="closeEditPostModal()" class="text-gray-400 hover:text-black text-lg p-1 leading-none">✕</button>
+      </div>
+
+      <!-- Textarea -->
+      <textarea id="edit-post-text" placeholder="What do you want to talk about?" class="w-full text-sm outline-none resize-none min-h-[120px] placeholder-gray-400 border border-gray-200 rounded-lg p-3 focus:border-[#0a66c2] leading-relaxed"></textarea>
+
+      <!-- Live Media Preview -->
+      <div id="edit-post-preview-container" class="relative rounded-lg overflow-hidden border border-gray-200 hidden">
+        <!-- Rendered preview -->
+      </div>
+
+      <!-- Media Attach Bar -->
+      <div class="border rounded-lg p-3 bg-gray-50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-gray-700">Media Attachment (Multiple Photos Supported)</span>
+          <span id="edit-post-attached-filename" class="text-xs text-[#0a66c2] font-medium truncate max-w-[200px]"></span>
+        </div>
+
+        <div class="flex gap-2">
+          <!-- File upload button from local gallery -->
+          <label class="flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-xs text-center cursor-pointer hover:bg-gray-100 flex items-center justify-center gap-1.5 font-medium transition-colors">
+            <i class="fa-solid fa-images text-blue-600"></i>
+            <span>Add Photos / Video</span>
+            <input type="file" id="edit-post-file-input" accept="image/*,video/*" multiple class="hidden" onchange="handleEditPostFileSelect(event)" />
+          </label>
+          <!-- Or URL Button -->
+          <button type="button" onclick="toggleEditPostUrlInput()" class="bg-white border border-gray-300 rounded px-3 py-2 text-xs hover:bg-gray-100 font-medium transition-colors">
+            🔗 Web URL
+          </button>
+          <button type="button" onclick="clearEditPostMedia()" class="bg-white border border-red-200 text-red-600 rounded px-3 py-2 text-xs hover:bg-red-50 font-medium transition-colors">
+            <i class="fa-regular fa-trash-can"></i> Clear All
+          </button>
+        </div>
+
+        <!-- URL Input Dropdown -->
+        <div id="edit-post-url-box" class="space-y-2 hidden pt-2">
+          <div class="flex gap-2">
+            <input type="text" id="edit-post-url-val" placeholder="Paste image or mp4 URL..." class="flex-1 border rounded px-2.5 py-1.5 text-xs outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditUrlMedia();}" />
+            <button type="button" onclick="addEditUrlMedia()" class="bg-[#0a66c2] text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-[#004182]">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex justify-end gap-2 border-t pt-3 mt-1">
+        <button type="button" onclick="closeEditPostModal()" class="px-4 py-2 rounded-full font-semibold text-xs text-gray-600 hover:bg-gray-100 transition-colors">
+          Cancel
+        </button>
+        <button type="button" onclick="saveEditedPost()" class="bg-[#0a66c2] text-white px-6 py-2 rounded-full font-semibold text-xs hover:bg-[#004182] transition-colors shadow-sm">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DELETE CONFIRMATION MODAL ================= -->
+  <div id="delete-post-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[420px] rounded-xl p-5 shadow-2xl flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-base text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Delete Post?
+        </h3>
+        <button onclick="closeDeletePostModal()" class="text-gray-400 hover:text-black text-lg p-1 leading-none">✕</button>
+      </div>
+      <p class="text-xs text-gray-600 leading-relaxed">
+        Are you sure you want to permanently delete this post? This action cannot be undone.
+      </p>
+      <div class="flex justify-end gap-2 pt-2 border-t mt-2">
+        <button onclick="closeDeletePostModal()" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+          Cancel
+        </button>
+        <button onclick="confirmDeletePost()" class="bg-red-600 text-white px-5 py-1.5 rounded-full text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EDIT PROFILE MODAL ================= -->
+  <div id="edit-profile-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[500px] rounded-xl p-6 shadow-2xl flex flex-col gap-3 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-lg text-gray-900">Edit Profile</h3>
+        <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-black text-lg">✕</button>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Full Name</label>
+        <input type="text" id="edit-name" class="w-full border rounded px-3 py-1.5 text-sm mt-1" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Headline</label>
+        <input type="text" id="edit-headline" class="w-full border rounded px-3 py-1.5 text-sm mt-1" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Location</label>
+        <input type="text" id="edit-location" class="w-full border rounded px-3 py-1.5 text-sm mt-1" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">About Summary</label>
+        <textarea id="edit-about" rows="3" class="w-full border rounded px-3 py-1.5 text-sm mt-1"></textarea>
+      </div>
+      <!-- Avatar Upload -->
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Profile Photo</label>
+        <div class="mt-2 flex items-center gap-3">
+          <img id="edit-avatar-preview" src="" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-sm" />
+          <div class="flex flex-col gap-1.5 flex-1">
+            <label for="edit-avatar-file" class="flex items-center gap-2 cursor-pointer bg-[#edf3f8] hover:bg-[#dce8f3] border border-[#0a66c2]/30 rounded-lg px-3 py-2 text-xs font-semibold text-[#0a66c2] transition-colors w-full justify-center">
+              <i class="fa-solid fa-upload"></i> Upload Photo
+              <input type="file" id="edit-avatar-file" accept="image/*" class="hidden" onchange="handleEditAvatarFile(event)" />
+            </label>
+            <input type="text" id="edit-avatar" placeholder="Or paste image URL..." class="w-full border rounded px-3 py-1.5 text-xs text-gray-600 outline-none focus:border-[#0a66c2]" oninput="syncAvatarPreview(this.value)" />
+          </div>
+        </div>
+      </div>
+      <!-- Banner Upload -->
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Banner Photo</label>
+        <div class="mt-2 flex flex-col gap-2">
+          <div class="w-full h-24 rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
+            <img id="edit-banner-preview" src="" class="w-full h-full object-cover" />
+          </div>
+          <label for="edit-banner-file" class="flex items-center gap-2 cursor-pointer bg-[#edf3f8] hover:bg-[#dce8f3] border border-[#0a66c2]/30 rounded-lg px-3 py-2 text-xs font-semibold text-[#0a66c2] transition-colors w-full justify-center">
+            <i class="fa-solid fa-image"></i> Upload Banner
+            <input type="file" id="edit-banner-file" accept="image/*" class="hidden" onchange="handleEditBannerFile(event)" />
+          </label>
+          <input type="text" id="edit-banner" placeholder="Or paste banner URL..." class="w-full border rounded px-3 py-1.5 text-xs text-gray-600 outline-none focus:border-[#0a66c2]" oninput="syncBannerPreview(this.value)" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 border-t pt-3 mt-2">
+        <button onclick="closeEditProfileModal()" class="px-4 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+        <button onclick="saveProfileChanges()" class="bg-[#0a66c2] text-white px-5 py-1.5 rounded-full text-xs font-semibold hover:bg-[#004182]">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REPOST MODAL ================= -->
+  <div id="repost-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[520px] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-3 border-b">
+        <h3 class="font-bold text-sm text-gray-900">Repost</h3>
+        <button onclick="closeRepostModal()" class="text-gray-400 hover:text-black text-lg leading-none">✕</button>
+      </div>
+      <!-- Repost type chooser -->
+      <div class="flex border-b">
+        <button id="repost-btn-instant" onclick="setRepostType('instant')" class="flex-1 py-3 text-xs font-semibold text-[#0a66c2] border-b-2 border-[#0a66c2] transition-colors">Repost instantly</button>
+        <button id="repost-btn-thought" onclick="setRepostType('thought')" class="flex-1 py-3 text-xs font-semibold text-gray-500 border-b-2 border-transparent hover:text-black transition-colors">Add a thought</button>
+      </div>
+      <!-- Instant tab -->
+      <div id="repost-pane-instant" class="p-5 flex flex-col items-center gap-3">
+        <!-- Original post preview -->
+        <div id="repost-preview-instant" class="w-full border rounded-xl p-3 bg-gray-50 text-xs text-gray-700 leading-relaxed line-clamp-3"></div>
+        <p class="text-xs text-gray-500 text-center">This will be shared with your network immediately.</p>
+        <button onclick="submitRepost(false)" class="bg-[#0a66c2] text-white rounded-full px-8 py-2 text-xs font-semibold hover:bg-[#004182] w-full">Repost Now</button>
+      </div>
+      <!-- Add a thought tab -->
+      <div id="repost-pane-thought" class="p-5 flex flex-col gap-3 hidden">
+        <div class="flex items-center gap-3">
+          <img id="repost-user-avatar" src="" class="w-10 h-10 rounded-full object-cover border" />
+          <span id="repost-user-name" class="font-bold text-sm text-gray-900"></span>
+        </div>
+        <textarea id="repost-thought-text" placeholder="What do you think about this?" class="w-full border rounded-lg px-3 py-2 text-sm outline-none resize-none min-h-[90px] placeholder-gray-400 focus:border-[#0a66c2]"></textarea>
+        <!-- Original post preview (thought tab) -->
+        <div id="repost-preview-thought" class="w-full border rounded-xl p-3 bg-gray-50 text-xs text-gray-700 leading-relaxed line-clamp-3"></div>
+        <button onclick="submitRepost(true)" class="bg-[#0a66c2] text-white rounded-full px-8 py-2 text-xs font-semibold hover:bg-[#004182] w-full">Post</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SEND / SHARE MODAL ================= -->
+  <div id="send-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[460px] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-3 border-b">
+        <h3 class="font-bold text-sm text-gray-900">Send post</h3>
+        <button onclick="closeSendModal()" class="text-gray-400 hover:text-black text-lg leading-none">✕</button>
+      </div>
+      <div class="p-4 flex flex-col gap-3">
+        <!-- Post snippet -->
+        <div id="send-post-preview" class="border rounded-xl p-3 bg-gray-50 text-xs text-gray-700 line-clamp-2"></div>
+        <!-- Connection selector -->
+        <div>
+          <p class="text-xs font-semibold text-gray-600 mb-2">Send to connection</p>
+          <div id="send-connections-list" class="flex flex-col gap-1 max-h-[200px] overflow-y-auto"></div>
+        </div>
+        <!-- Message box -->
+        <div>
+          <p class="text-xs font-semibold text-gray-600 mb-1">Add a message <span class="font-normal text-gray-400">(optional)</span></p>
+          <textarea id="send-message-text" placeholder="Write something..." rows="3" class="w-full border rounded-lg px-3 py-2 text-xs outline-none resize-none placeholder-gray-400 focus:border-[#0a66c2]"></textarea>
+        </div>
+        <button onclick="submitSendPost()" class="bg-[#0a66c2] text-white rounded-full py-2 text-xs font-semibold hover:bg-[#004182] w-full">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD CERTIFICATION MODAL ================= -->
+  <div id="add-cert-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[500px] rounded-xl p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-award text-amber-600"></i> Add license or certification
+        </h3>
+        <button onclick="closeAddCertModal()" class="text-gray-400 hover:text-black text-lg leading-none">✕</button>
+      </div>
+      <div class="space-y-3.5">
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Name <span class="text-red-500">*</span></label>
+          <input type="text" id="cert-name-input" placeholder="e.g. AWS Certified Solutions Architect" class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewCertification();}" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Issuing organization <span class="text-red-500">*</span></label>
+          <input type="text" id="cert-org-input" placeholder="e.g. Amazon Web Services (AWS)" class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewCertification();}" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-gray-700">Issue date</label>
+            <input type="text" id="cert-date-input" placeholder="e.g. Jan 2024" class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-700">Credential ID</label>
+            <input type="text" id="cert-id-input" placeholder="e.g. AWS-123456" class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Credential URL</label>
+          <input type="text" id="cert-url-input" placeholder="https://..." class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Badge / Logo URL (Optional)</label>
+          <input type="text" id="cert-logo-input" placeholder="Paste image link or leave empty for default badge..." class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 border-t pt-3 mt-1">
+        <button onclick="closeAddCertModal()" class="px-4 py-2 text-xs text-gray-600 hover:bg-gray-100 rounded-full font-semibold transition-colors">Cancel</button>
+        <button onclick="saveNewCertification()" class="bg-[#0a66c2] text-white px-6 py-2 rounded-full text-xs font-semibold hover:bg-[#004182] transition-colors shadow-sm">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD SKILL MODAL ================= -->
+  <div id="add-skill-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[480px] rounded-xl p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-[#0a66c2]"></i> Add skill
+        </h3>
+        <button onclick="closeAddSkillModal()" class="text-gray-400 hover:text-black text-lg leading-none">✕</button>
+      </div>
+      <div class="space-y-3.5">
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Skill <span class="text-red-500">*</span></label>
+          <input type="text" id="skill-name-input" placeholder="e.g. Python, Docker, Machine Learning..." class="w-full border rounded-lg px-3 py-2 text-xs mt-1 outline-none focus:border-[#0a66c2]" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewSkill();}" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-500 mb-2 block">Suggested based on your profile:</label>
+          <div class="flex flex-wrap gap-1.5" id="skill-suggestions">
+            <!-- Render suggestions dynamically -->
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 border-t pt-3 mt-1">
+        <button onclick="closeAddSkillModal()" class="px-4 py-2 text-xs text-gray-600 hover:bg-gray-100 rounded-full font-semibold transition-colors">Cancel</button>
+        <button onclick="saveNewSkill()" class="bg-[#0a66c2] text-white px-6 py-2 rounded-full text-xs font-semibold hover:bg-[#004182] transition-colors shadow-sm">Add Skill</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= IMAGE LIGHTBOX MODAL ================= -->
+  <div id="image-lightbox-modal" class="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center hidden p-4 select-none" onclick="closeImageLightbox()">
+    <!-- Prev Arrow Button -->
+    <button id="lightbox-prev-btn" onclick="event.stopPropagation(); prevLightboxImage()" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-11 h-11 sm:w-13 sm:h-13 rounded-full flex items-center justify-center text-lg sm:text-xl z-20 transition-all cursor-pointer backdrop-blur-xs hidden">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <!-- Next Arrow Button -->
+    <button id="lightbox-next-btn" onclick="event.stopPropagation(); nextLightboxImage()" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-11 h-11 sm:w-13 sm:h-13 rounded-full flex items-center justify-center text-lg sm:text-xl z-20 transition-all cursor-pointer backdrop-blur-xs hidden">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div class="relative max-w-5xl max-h-[92vh] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+      <div class="absolute -top-11 left-0 right-0 flex items-center justify-between px-1">
+        <span id="lightbox-counter" class="text-white text-xs font-semibold bg-white/15 px-3 py-1 rounded-full backdrop-blur-xs hidden">1 / 1</span>
+        <button onclick="closeImageLightbox()" class="text-white hover:text-gray-300 text-2xl font-bold p-1 leading-none ml-auto">✕</button>
+      </div>
+      <img id="lightbox-image" src="" alt="Full view" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border border-white/10 transition-opacity duration-150" />
+    </div>
+  </div>
+
+  <!-- ================= EASY APPLY MODAL ================= -->
+  <div id="easy-apply-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[500px] rounded-xl shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b">
+        <div>
+          <h3 id="apply-modal-title" class="font-bold text-base text-gray-900">Job Title</h3>
+          <p id="apply-modal-company" class="text-xs text-gray-500 mt-0.5">Company</p>
+        </div>
+        <button onclick="closeApplyModal()" class="text-gray-400 hover:text-black text-xl leading-none p-1">✕</button>
+      </div>
+
+      <!-- Step Indicators -->
+      <div class="flex gap-0 border-b">
+        <div id="apply-step-1-tab" class="flex-1 text-center py-2 text-[11px] font-semibold text-[#0a66c2] border-b-2 border-[#0a66c2] cursor-pointer">Contact Info</div>
+        <div id="apply-step-2-tab" class="flex-1 text-center py-2 text-[11px] font-semibold text-gray-400 border-b-2 border-transparent cursor-pointer">Resume</div>
+        <div id="apply-step-3-tab" class="flex-1 text-center py-2 text-[11px] font-semibold text-gray-400 border-b-2 border-transparent cursor-pointer">Review</div>
+      </div>
+
+      <!-- Step 1: Contact Info -->
+      <div id="apply-step-1" class="p-5 space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] font-semibold text-gray-600 block mb-1">First name *</label>
+            <input id="apply-fname" type="text" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]" placeholder="Alex" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-gray-600 block mb-1">Last name *</label>
+            <input id="apply-lname" type="text" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" placeholder="Rivera" />
+          </div>
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-gray-600 block mb-1">Email address *</label>
+          <input id="apply-email" type="email" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" placeholder="alex@example.com" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-gray-600 block mb-1">Phone number</label>
+          <input id="apply-phone" type="tel" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" placeholder="+1 (555) 000-0000" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-gray-600 block mb-1">City, State</label>
+          <input id="apply-city" type="text" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2]" placeholder="San Francisco, CA" />
+        </div>
+        <div class="flex justify-end pt-2">
+          <button onclick="applyGoStep(2)" class="bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full px-6 py-2 text-xs font-semibold transition-colors">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Resume -->
+      <div id="apply-step-2" class="p-5 space-y-3 hidden">
+        <p class="text-xs font-semibold text-gray-700">Upload your resume</p>
+        <label for="apply-resume-file" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 cursor-pointer hover:border-[#0a66c2] hover:bg-blue-50/30 transition-all group">
+          <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 group-hover:text-[#0a66c2] transition-colors mb-2"></i>
+          <span class="text-xs font-semibold text-gray-600 group-hover:text-[#0a66c2]">Click to upload PDF or DOCX</span>
+          <span id="apply-file-name" class="text-[11px] text-gray-400 mt-1">No file selected</span>
+        </label>
+        <input type="file" id="apply-resume-file" accept=".pdf,.docx,.doc" class="hidden" onchange="handleResumeSelect(this)" />
+        <div>
+          <label class="text-[11px] font-semibold text-gray-600 block mb-1">Cover letter (optional)</label>
+          <textarea id="apply-cover" rows="3" class="w-full border rounded-lg px-3 py-2 text-xs outline-none focus:border-[#0a66c2] resize-none" placeholder="Tell them why you're a great fit..."></textarea>
+        </div>
+        <div class="flex justify-between pt-2">
+          <button onclick="applyGoStep(1)" class="border border-gray-300 text-gray-600 rounded-full px-5 py-2 text-xs font-semibold hover:bg-gray-50">Back</button>
+          <button onclick="applyGoStep(3)" class="bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full px-6 py-2 text-xs font-semibold transition-colors">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Review & Submit -->
+      <div id="apply-step-3" class="p-5 space-y-3 hidden">
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-xs text-green-700 flex items-start gap-2">
+          <i class="fa-solid fa-circle-check text-green-500 mt-0.5"></i>
+          <div>
+            <p class="font-semibold">Your application is ready to submit!</p>
+            <p class="text-green-600 mt-0.5">Review the details below before sending.</p>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-xs">
+          <div class="flex justify-between"><span class="text-gray-500">Position</span><span id="review-title" class="font-semibold text-gray-800 text-right max-w-[55%]">—</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Company</span><span id="review-company" class="font-semibold text-gray-800">—</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Applicant</span><span id="review-name" class="font-semibold text-gray-800">—</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Email</span><span id="review-email" class="font-semibold text-gray-800">—</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Resume</span><span id="review-resume" class="font-semibold text-gray-800">—</span></div>
+        </div>
+        <label class="flex items-start gap-2 cursor-pointer select-none">
+          <input type="checkbox" id="apply-agree" checked class="mt-0.5 w-3.5 h-3.5 text-[#0a66c2]" />
+          <span class="text-[11px] text-gray-500">I confirm all information is accurate and I agree to share my profile with this employer.</span>
+        </label>
+        <div class="flex justify-between pt-1">
+          <button onclick="applyGoStep(2)" class="border border-gray-300 text-gray-600 rounded-full px-5 py-2 text-xs font-semibold hover:bg-gray-50">Back</button>
+          <button onclick="submitApplication()" class="bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full px-6 py-2 text-xs font-semibold transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane text-[10px]"></i> Submit Application
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT STATE & LOGIC ================= -->
+
+  <!-- Application Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/media.js"></script>
+  <script src="js/posts.js"></script>
+  <script src="js/repost.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

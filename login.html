@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | LinkUp</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='36' height='36' rx='9' fill='url(%23g)'/%3E%3Cpath d='M18 5 L20.5 15.5 L31 18 L20.5 20.5 L18 31 L15.5 20.5 L5 18 L15.5 15.5 Z' fill='white'/%3E%3C/svg%3E">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      background-color: #f3f2ef;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .auth-input-group {
+      position: relative;
+    }
+    .auth-input {
+      width: 100%;
+      height: 52px;
+      padding: 16px 14px 4px 14px;
+      border: 1px solid rgba(0,0,0,0.6);
+      border-radius: 4px;
+      font-size: 15px;
+      color: rgba(0,0,0,0.9);
+      background-color: transparent;
+      outline: none;
+      transition: all 0.15s ease-in-out;
+    }
+    .auth-input:focus {
+      border-color: #0a66c2;
+      box-shadow: 0 0 0 1px #0a66c2;
+    }
+    .auth-label {
+      position: absolute;
+      left: 14px;
+      top: 16px;
+      font-size: 15px;
+      color: rgba(0,0,0,0.6);
+      pointer-events: none;
+      transition: all 0.15s ease-in-out;
+    }
+    .auth-input:focus ~ .auth-label,
+    .auth-input:not(:placeholder-shown) ~ .auth-label {
+      top: 6px;
+      font-size: 11px;
+      color: rgba(0,0,0,0.7);
+      font-weight: 500;
+    }
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-900">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="w-full max-w-[1128px] mx-auto px-6 py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2 focus:outline-none group">
+      <!-- Custom diamond logo mark -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hdr-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+        <rect width="36" height="36" rx="9" fill="url(#hdr-grad)"/>
+        <path d="M18 5 L20.5 15.5 L31 18 L20.5 20.5 L18 31 L15.5 20.5 L5 18 L15.5 15.5 Z" fill="white" opacity="0.95"/>
+        <circle cx="18" cy="18" r="2.8" fill="url(#hdr-grad)"/>
+      </svg>
+      <span class="font-extrabold text-xl tracking-tight text-gray-800 group-hover:text-[#6366f1] transition-colors">LinkUp</span>
+    </a>
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-gray-600 hidden sm:inline">New to LinkUp?</span>
+      <a href="signup.html" class="text-[#0a66c2] hover:text-[#004182] hover:bg-blue-50 border border-transparent font-semibold text-sm px-4 py-2 rounded-full transition-all">
+        Join now
+      </a>
+    </div>
+  </header>
+
+  <!-- ================= MAIN LOGIN CONTAINER ================= -->
+  <main class="flex-1 flex flex-col items-center justify-center px-4 py-4 sm:py-8">
+    <div id="login-card" class="bg-white w-full max-w-[400px] p-6 sm:p-8 rounded-lg shadow-md border border-gray-200">
+      
+      <!-- Heading -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-semibold text-gray-900 leading-tight">Sign in</h1>
+        <p class="text-sm text-gray-600 mt-1">Stay updated on your professional world</p>
+      </div>
+
+      <!-- Alert Box for Errors -->
+      <div id="error-alert" class="hidden mb-4 p-3 bg-red-50 border-l-4 border-red-500 rounded text-red-700 text-xs flex items-start gap-2">
+        <i class="fa-solid fa-circle-exclamation mt-0.5 text-sm shrink-0"></i>
+        <span id="error-message">Invalid email or password.</span>
+      </div>
+
+      <!-- Success Alert -->
+      <div id="success-alert" class="hidden mb-4 p-3 bg-green-50 border-l-4 border-green-500 rounded text-green-700 text-xs flex items-start gap-2">
+        <i class="fa-solid fa-circle-check mt-0.5 text-sm shrink-0"></i>
+        <span id="success-message">Signed in successfully! Redirecting...</span>
+      </div>
+
+      <!-- Form -->
+      <form id="login-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        
+        <!-- Email Input -->
+        <div class="auth-input-group">
+          <input type="email" id="login-email" required placeholder=" " autocomplete="email" class="auth-input" />
+          <label for="login-email" class="auth-label">Email or phone</label>
+        </div>
+
+        <!-- Password Input -->
+        <div class="auth-input-group">
+          <input type="password" id="login-password" required placeholder=" " autocomplete="current-password" class="auth-input pr-16" />
+          <label for="login-password" class="auth-label">Password</label>
+          <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-3.5 text-xs font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline p-1">
+            <span id="pwd-toggle-text">Show</span>
+          </button>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="remember-me" checked class="w-4 h-4 text-[#0a66c2] rounded border-gray-300 focus:ring-[#0a66c2]" />
+            <span class="text-xs text-gray-600">Keep me logged in</span>
+          </label>
+          <a href="#" onclick="openForgotPasswordModal(event)" class="text-xs font-semibold text-[#0a66c2] hover:underline">
+            Forgot password?
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="w-full bg-[#0a66c2] hover:bg-[#004182] text-white font-semibold py-3 rounded-full text-base transition-colors shadow-sm flex items-center justify-center gap-2">
+          <span id="btn-text">Sign in</span>
+          <i id="btn-spinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="relative my-6 flex items-center justify-center">
+        <div class="border-t border-gray-300 w-full"></div>
+        <span class="bg-white px-3 text-xs text-gray-500 uppercase tracking-wider absolute">or</span>
+      </div>
+
+      <!-- Google Sign In -->
+      <button onclick="handleGoogleSignIn()" class="w-full border border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 px-4 rounded-full text-sm transition-all flex items-center justify-center gap-3">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+    </div>
+
+    <!-- Sign up redirect text below card -->
+    <div class="mt-6 text-center text-sm text-gray-700">
+      New to LinkedIn? 
+      <a href="signup.html" class="font-bold text-[#0a66c2] hover:underline ml-1">Join now</a>
+    </div>
+  </main>
+
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <div id="forgot-password-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-[420px] rounded-xl p-6 shadow-2xl relative">
+      <button onclick="closeForgotPasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-xl leading-none">✕</button>
+      <h3 class="text-xl font-bold text-gray-900 mb-1">Forgot password?</h3>
+      <p class="text-xs text-gray-600 mb-4">Reset your password in one easy step. Enter your account email below.</p>
+      
+      <div id="reset-alert" class="hidden mb-3 p-2.5 rounded text-xs"></div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-700 block mb-1">Email address</label>
+          <input type="email" id="reset-email" placeholder="e.g. alex@tech.io" class="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700 block mb-1">New Password (Optional, default: password123)</label>
+          <input type="password" id="reset-new-password" placeholder="Enter new password" class="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]" />
+        </div>
+        <button onclick="handlePasswordReset()" class="w-full bg-[#0a66c2] hover:bg-[#004182] text-white py-2.5 rounded-full text-xs font-semibold transition-colors mt-2">
+          Reset Password
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="w-full bg-white border-t border-gray-200 py-4 mt-6">
+    <div class="max-w-[1128px] mx-auto px-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-500">
+      <div class="flex items-center gap-1.5 font-semibold text-gray-700">
+        <svg width="18" height="18" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="ftr-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+          <rect width="36" height="36" rx="9" fill="url(#ftr-grad)"/>
+          <path d="M18 5 L20.5 15.5 L31 18 L20.5 20.5 L18 31 L15.5 20.5 L5 18 L15.5 15.5 Z" fill="white" opacity="0.95"/>
+          <circle cx="18" cy="18" r="2.8" fill="url(#ftr-grad)"/>
+        </svg>
+        <span class="font-extrabold text-gray-700">LinkUp</span>
+        <span class="ml-1 text-[11px] font-normal text-gray-500">© 2026</span>
+      </div>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">User Agreement</a>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">Privacy Policy</a>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">Community Guidelines</a>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">Cookie Policy</a>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">Copyright Policy</a>
+      <a href="#" class="hover:underline hover:text-[#0a66c2]">Send Feedback</a>
+      <span class="text-gray-400">Language: <strong>English</strong></span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/auth.js"></script>
+  <script>
+    // Prefill remembered email or check query params
+    document.addEventListener("DOMContentLoaded", () => {
+      const remembered = localStorage.getItem("lk_remembered_email");
+      if (remembered) {
+        document.getElementById("login-email").value = remembered;
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("registered") === "true") {
+        const email = params.get("email");
+        if (email) document.getElementById("login-email").value = email;
+        showSuccessMessage("Account created successfully! Please sign in.");
+      } else if (params.get("logged_out") === "true") {
+        showSuccessMessage("You have successfully signed out.");
+      }
+    });
+
+    function togglePasswordVisibility() {
+      const pwd = document.getElementById("login-password");
+      const toggle = document.getElementById("pwd-toggle-text");
+      if (pwd.type === "password") {
+        pwd.type = "text";
+        toggle.innerText = "Hide";
+      } else {
+        pwd.type = "password";
+        toggle.innerText = "Show";
+      }
+    }
+
+    function showErrorMessage(msg) {
+      const alert = document.getElementById("error-alert");
+      const msgEl = document.getElementById("error-message");
+      const card = document.getElementById("login-card");
+      msgEl.innerText = msg;
+      alert.classList.remove("hidden");
+      document.getElementById("success-alert").classList.add("hidden");
+      
+      card.classList.remove("shake");
+      void card.offsetWidth; // trigger reflow
+      card.classList.add("shake");
+    }
+
+    function showSuccessMessage(msg) {
+      const alert = document.getElementById("success-alert");
+      const msgEl = document.getElementById("success-message");
+      msgEl.innerText = msg;
+      alert.classList.remove("hidden");
+      document.getElementById("error-alert").classList.add("hidden");
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const pass = document.getElementById("login-password").value;
+      const remember = document.getElementById("remember-me").checked;
+      
+      const btn = document.getElementById("submit-btn");
+      const spinner = document.getElementById("btn-spinner");
+      const btnText = document.getElementById("btn-text");
+
+      // UI Loading state
+      btn.disabled = true;
+      spinner.classList.remove("hidden");
+      btnText.innerText = "Signing in...";
+
+      setTimeout(async () => {
+        const res = await authLogin(email, pass, remember);
+        if (res.success) {
+          showSuccessMessage("Welcome back, " + res.user.name + "! Redirecting to your feed...");
+          setTimeout(() => {
+            window.location.href = "index.html?welcome=true";
+          }, 800);
+        } else {
+          showErrorMessage(res.error);
+          btn.disabled = false;
+          spinner.classList.add("hidden");
+          btnText.innerText = "Sign in";
+        }
+      }, 400);
+    }
+
+
+
+    function handleGoogleSignIn() {
+      // Demo Google Sign-In: picks Priya Sharma or Alex Rivera
+      const users = getRegisteredUsers();
+      const user = users[0] || SEED_USERS[0];
+      localStorage.setItem("lk_logged_in", "true");
+      localStorage.setItem("lk_user", JSON.stringify(user));
+      showSuccessMessage("Authenticated via Google as " + user.name + "! Redirecting...");
+      setTimeout(() => {
+        window.location.href = "index.html?welcome=true";
+      }, 900);
+    }
+
+    function openForgotPasswordModal(e) {
+      if (e) e.preventDefault();
+      const modal = document.getElementById("forgot-password-modal");
+      modal.classList.remove("hidden");
+      const currentEmail = document.getElementById("login-email").value;
+      if (currentEmail) {
+        document.getElementById("reset-email").value = currentEmail;
+      }
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById("forgot-password-modal").classList.add("hidden");
+    }
+
+    function handlePasswordReset() {
+      const email = document.getElementById("reset-email").value;
+      const newPass = document.getElementById("reset-new-password").value || "password123";
+      const alert = document.getElementById("reset-alert");
+      
+      const res = authResetPassword(email, newPass);
+      alert.classList.remove("hidden");
+      if (res.success) {
+        alert.className = "mb-3 p-2.5 rounded text-xs bg-green-50 text-green-700 border border-green-200";
+        alert.innerText = res.message;
+        setTimeout(() => {
+          closeForgotPasswordModal();
+          document.getElementById("login-email").value = email;
+          document.getElementById("login-password").value = newPass;
+          showSuccessMessage("Password reset complete! You can now sign in.");
+        }, 1500);
+      } else {
+        alert.className = "mb-3 p-2.5 rounded text-xs bg-red-50 text-red-700 border border-red-200";
+        alert.innerText = res.error;
+      }
+    }
+  </script>
+</body>
+</html>
