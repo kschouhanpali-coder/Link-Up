@@ -9,7 +9,7 @@
 ![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)
 ![Type](https://img.shields.io/badge/Type-Professional%20Network%20Clone-0A66C2?style=for-the-badge)
 
-A professional networking web app inspired by LinkedIn. Sign in, share posts with photos and videos, grow your network, apply to jobs with a 3-step Easy Apply flow, and manage your own profile, all in the browser.
+A professional networking web app. Sign in, share posts with photos and videos, grow your network, apply to jobs with a 3-step Easy Apply flow, and manage your own profile, all in the browser.
 
 *From profile to opportunity, in a few clicks.*
 
