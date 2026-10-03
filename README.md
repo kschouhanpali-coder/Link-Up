@@ -130,12 +130,6 @@ linkup-clone/
 
 ---
 
-## ⚠️ Disclaimer
-
-LinkUp is an educational and portfolio project. It is not affiliated with, endorsed by, or connected to LinkedIn. All names, posts, and jobs are sample data.
-
----
-
 ## 📝 License
 
 MIT License - Free to use and modify
